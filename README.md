@@ -31,7 +31,6 @@ cd PROJETO-COLONIA-FIAP
 python colonia.py
 ```
 
-> No Linux e no macOS, use `python3` se o `python` não funcionar.
 
 O `colonia.py` lê os arquivos `dados_colonia.md` e `modulos_colonia.md`, que precisam estar na mesma pasta.
 
