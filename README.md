@@ -34,7 +34,7 @@ python colonia.py
 
 O `colonia.py` lê os arquivos `dados_colonia.md` e `modulos_colonia.md`, que precisam estar na mesma pasta.
 
-## O que aparece na tela
+## SAIDA ESPERDA DO SISTEMA
 
 - A hierarquia da colônia e a navegação entre os subsistemas.
 - As regras de decisão testadas em alguns casos.
