@@ -11,7 +11,7 @@ Aqui a gente explica de onde vêm os números da tabela [dados_colonia.md](dados
 
 ## 1. Consumo dos sistemas
 
-O consumo total da colônia é a soma do consumo dos 5 sistemas da tabela [sistemas_colonia.md](sistemas_colonia.md):
+O consumo total da colônia é a soma do consumo dos 5 sistemas da tabela [modulos_colonia.md](modulos_colonia.md):
 
 ```
 consumo_total = Energia + Habitação + Suporte médico + Logística + Laboratório
@@ -52,7 +52,7 @@ O sol gera energia em forma de parábola: sobe até o meio-dia e desce depois (v
 P(t) = 20 · (1 − ((t − 12) / 6)²)        em kW, para t entre 6 h e 18 h
 ```
 
-![Parábola da energia solar P(t), feita no GeoGebra](assets/parabola_solar.png)
+![Parábola da energia solar P(t), feita no GeoGebra](assets/parabola_solar_colonia_fiap.png)
 
 *Gráfico da parábola P(t) feito no GeoGebra. O pico é ao meio-dia (12 h, 20 kW) e a curva vale 0 às 6 h e às 18 h. A área azul sob a curva, entre 6 h e 18 h, é de 160 kWh — a energia solar de um dia inteiro de sol.*
 
@@ -63,20 +63,6 @@ produção_solar = 160 × (tempo_de_sol / 12)        em kWh por dia
 ```
 
 Isso equivale a cerca de **13,33 kWh por hora de sol**. É uma simplificação: na vida real um dia mais curto também muda o formato da curva.
-
-#### Como refazer o gráfico no GeoGebra
-
-Basta abrir o [GeoGebra](https://www.geogebra.org/calculator) e digitar, uma linha por vez, no campo de entrada:
-
-```
-f(t) = 20 * (1 - ((t - 12) / 6)^2)
-Pico = (12, 20)
-area = Integral(f, 6, 18)
-```
-
-- A primeira linha desenha a parábola.
-- `Pico` marca o ponto mais alto (meio-dia, 20 kW).
-- `Integral(f, 6, 18)` sombreia a área sob a curva e mostra que ela vale **160** (os 160 kWh do dia).
 
 ### Energia eólica
 
