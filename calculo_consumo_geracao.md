@@ -19,7 +19,7 @@ consumo_total = Energia + Habitação + Suporte médico + Logística + Laborató
 
 | Sistema | Como se calcula | Faixa em kW |
 |---|---|:---:|
-| Energia | Fixo: a base gasta 6 kW o tempo todo | 6 |
+| Energia | Fixo: a base gasta 6 kW o tempo todo (o mesmo valor do `funcao_math.md`) | 6 |
 | Habitação | 60 % do consumo de suporte à vida | 6,9 a 8,1 |
 | Suporte médico | 40 % do consumo de suporte à vida (o que sobra) | 4,6 a 5,4 |
 | Logística | 55 % do consumo de operações | 5,5 a 8,3 |
@@ -46,7 +46,7 @@ produção_total = produção_solar + produção_eólica
 
 ### Energia solar
 
-O sol gera energia em forma de parábola: sobe até o meio-dia e desce depois.
+O sol gera energia em forma de parábola: sobe até o meio-dia e desce depois (veja o `funcao_math.md`).
 
 ```
 P(t) = 20 · (1 − ((t − 12) / 6)²)        em kW, para t entre 6 h e 18 h
@@ -63,6 +63,20 @@ produção_solar = 160 × (tempo_de_sol / 12)        em kWh por dia
 ```
 
 Isso equivale a cerca de **13,33 kWh por hora de sol**. É uma simplificação: na vida real um dia mais curto também muda o formato da curva.
+
+#### Como refazer o gráfico no GeoGebra
+
+Basta abrir o [GeoGebra](https://www.geogebra.org/calculator) e digitar, uma linha por vez, no campo de entrada:
+
+```
+f(t) = 20 * (1 - ((t - 12) / 6)^2)
+Pico = (12, 20)
+area = Integral(f, 6, 18)
+```
+
+- A primeira linha desenha a parábola.
+- `Pico` marca o ponto mais alto (meio-dia, 20 kW).
+- `Integral(f, 6, 18)` sombreia a área sob a curva e mostra que ela vale **160** (os 160 kWh do dia).
 
 ### Energia eólica
 
