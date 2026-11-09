@@ -1,5 +1,9 @@
-suporte medico - prioridade 4 - energia solar ok - energia eolica ok - suporte de vida ok - armazenamento de energia no
-habitacao - prioridade 2 - energia solar ok - energia eolica ok  - suporte de vida ok - armazenamento de energia no
-logistica - prioridade 3 - energia solar no - energia eolica no - suporte de vida ok - armazenamento de energia no
-laboratorio - prioridade 5 - energia solar ok - energia eolica no - suporte de vida ok - armazenamento de energia no 
-energia - prioridade 1 - energia solar ok - energia eolica ok - suporte de vida no - armazenamento de energia ok - 
+# Sistemas da colônia
+
+| Sistema | Prioridade | Energia solar | Energia eólica | Suporte de vida | Armazenamento de energia |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Suporte médico | 4 | OK | OK | OK | NÃO |
+| Habitação | 2 | OK | OK | OK | NÃO |
+| Logística | 3 | NÃO | NÃO | OK | NÃO |
+| Laboratório | 5 | OK | NÃO | OK | NÃO |
+| Energia | 1 | OK | OK | NÃO | OK |
