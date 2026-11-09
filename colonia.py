@@ -364,23 +364,24 @@ def prever(a, b, x):
     return a * x + b
 
 
-# Listas de treino. A turbina tem um teto (720 kWh/dia), então a reta só é
-# ajustada nos dias em que a turbina NÃO estava no limite nem desligada.
-teto_eolica = max(d["producao_eolica"] for d in dias)
+# MEDIÇÕES REAIS (com ruído). Em dias anteriores a colônia mediu o vento e a
+# energia que a turbina gerou, e o tempo de sol e a energia solar. Como são
+# medições reais, os pontos têm ruído: a reta não passa exata por todos eles
+# e o r2 fica abaixo de 1 — é uma previsão de verdade, com erro.
+# Cada par é (medida, energia_gerada_no_dia em kWh).
 
-vento_treino = []
-eolica_treino = []
+# Vento (m/s)  ->  energia eólica medida no dia (kWh)
+vento_medido = [6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 7, 8, 9, 10, 6]
+eolica_medida = [348, 433, 465, 496, 551, 528, 612, 585, 648, 677, 705, 410, 489, 560, 606, 372]
 
-for d in dias:
-    if d["vento"] <= VENTO_TEMPESTADE and d["producao_eolica"] < teto_eolica:
-        vento_treino.append(d["vento"])
-        eolica_treino.append(d["producao_eolica"])
+# Tempo de sol (h)  ->  energia solar medida no dia (kWh)
+sol_medido = [8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 9, 10, 11, 8]
+solar_medida = [112, 101, 124, 117, 138, 129, 141, 151, 140, 153, 156, 164, 126, 127, 149, 110]
 
-sol_treino = [d["tempo_sol"] for d in dias]
-solar_treino = [d["producao_solar"] for d in dias]
+teto_eolica = max(d["producao_eolica"] for d in dias)  # teto da turbina (720 kWh)
 
-a_eol, b_eol, r2_eol = regressao_linear(vento_treino, eolica_treino)
-a_sol, b_sol, r2_sol = regressao_linear(sol_treino, solar_treino)
+a_eol, b_eol, r2_eol = regressao_linear(vento_medido, eolica_medida)
+a_sol, b_sol, r2_sol = regressao_linear(sol_medido, solar_medida)
 
 
 def energia_eolica(vento):
@@ -419,6 +420,41 @@ def analisar_energia(geracao, consumo, reserva=None):
 
 def nomes(lista):
     return ", ".join(lista) if lista else "nenhum"
+
+
+# MODO INTERATIVO (opcional): o usuário digita um cenário e vê a decisão
+
+
+def modo_interativo():
+    """Deixa o usuário testar a colônia: digita os dados e vê a decisão.
+    Roda só quando o programa é chamado com  python colonia.py -i
+    """
+    print("\n=== MODO INTERATIVO ===")
+    print("Digite os dados de um dia e veja a decisão. Enter vazio para sair.\n")
+
+    while True:
+        txt = input("Armazenamento em % (0 a 100): ").strip().replace(",", ".")
+
+        if txt == "":
+            print("Saindo do modo interativo.")
+            break
+
+        try:
+            arm = float(txt)
+            consumo = float(input("Consumo total (kWh): ").replace(",", "."))
+            vento = float(input("Vento (m/s): ").replace(",", "."))
+        except ValueError:
+            print("  Valor inválido, tente de novo.\n")
+            continue
+
+        msg, acao = decidir(arm, consumo, True, vento)
+        print("  Decisão:", msg)
+
+        desligados = aplicar(acao)
+        if desligados:
+            print("  Desligar:", nomes(desligados))
+
+        print()
 
 
 # PROGRAMA PRINCIPAL
@@ -485,13 +521,13 @@ for energia, consumo, vida, vento in testes:
 
 print("\n=== 3. PREVISÃO POR REGRESSÃO ===")
 
-print("Vento -> energia eólica (%d dias de treino)" % len(vento_treino))
+print("Vento -> energia eólica (%d medições reais)" % len(vento_medido))
 print("Reta: eólica = %.2f * vento %+.2f  (r2 = %.3f)" % (a_eol, b_eol, r2_eol))
 
 for v in (8, 11, 14, 28):
     print("Entrada: vento = %d -> previsão de energia eólica ≈ %.0f kWh" % (v, energia_eolica(v)))
 
-print("\nTempo de sol -> energia solar (%d dias de treino)" % len(sol_treino))
+print("\nTempo de sol -> energia solar (%d medições reais)" % len(sol_medido))
 print("Reta: solar = %.2f * horas %+.2f  (r2 = %.3f)" % (a_sol, b_sol, r2_sol))
 
 for h in (6, 10, 12):
@@ -588,3 +624,40 @@ print("\nÚltimos 3 eventos da pilha (do mais recente para o mais antigo):")
 
 for _ in range(min(3, len(historico))):
     print("  ", historico.pop())
+
+
+# CONCLUSÃO (texto automático a partir dos resultados do mês)
+
+print("\n=== CONCLUSÃO ===")
+
+dias_de_corte = contagem.get("emergencia", 0) + contagem.get("economia", 0) + contagem.get("reduzir", 0)
+
+print(
+    "Nos %d dias, a colônia operou normal em %d e precisou agir em %d."
+    % (len(dias), contagem.get("normal", 0), dias_de_corte)
+)
+print(
+    "O consumo (%d kWh) ficou perto da geração (%d kWh) no mês, então a colônia"
+    % (total_cons, total_prod)
+)
+print("vive no limite: depende da bateria para atravessar os dias ruins.")
+print(
+    "O pior momento foi o dia %d, quando a bateria zerou (%d kWh) por causa da"
+    % (pior["dia"], pior["armazenamento"])
+)
+print(
+    "tempestade, e o sistema entrou em emergência (%d dia(s)) cortando Logística"
+    % contagem.get("emergencia", 0)
+)
+print("e Laboratório para proteger o suporte à vida, que nunca foi desligado.")
+print(
+    "Conclusão: o sistema de decisão deu conta, mas a margem é pequena — mais"
+)
+print("painéis ou uma bateria maior deixariam a colônia mais segura.")
+
+
+# Roda o modo interativo só se pedir:  python colonia.py -i
+import sys
+
+if "-i" in sys.argv or "--interativo" in sys.argv:
+    modo_interativo()
