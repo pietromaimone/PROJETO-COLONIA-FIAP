@@ -64,20 +64,6 @@ produção_solar = 160 × (tempo_de_sol / 12)        em kWh por dia
 
 Isso equivale a cerca de **13,33 kWh por hora de sol**. É uma simplificação: na vida real um dia mais curto também muda o formato da curva.
 
-#### Como refazer o gráfico no GeoGebra
-
-Basta abrir o [GeoGebra](https://www.geogebra.org/calculator) e digitar, uma linha por vez, no campo de entrada:
-
-```
-f(t) = 20 * (1 - ((t - 12) / 6)^2)
-Pico = (12, 20)
-area = Integral(f, 6, 18)
-```
-
-- A primeira linha desenha a parábola.
-- `Pico` marca o ponto mais alto (meio-dia, 20 kW).
-- `Integral(f, 6, 18)` sombreia a área sob a curva e mostra que ela vale **160** (os 160 kWh do dia).
-
 ### Energia eólica
 
 A turbina gera mais quanto mais forte é o vento. O ajuste feito com a regressão linear é uma reta:
