@@ -58,9 +58,6 @@ git clone https://github.com/pietromaimone/PROJETO-COLONIA-FIAP.git
 cd PROJETO-COLONIA-FIAP
 python colonia.py
 ```
-
-> No Linux e no macOS, use `python3` se o `python` não funcionar.
-
 ### Modo interativo
 
 Para digitar um cenário (armazenamento, consumo e vento) e ver a decisão na hora:
