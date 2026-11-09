@@ -52,7 +52,7 @@ O sol gera energia em forma de parábola: sobe até o meio-dia e desce depois (v
 P(t) = 20 · (1 − ((t − 12) / 6)²)        em kW, para t entre 6 h e 18 h
 ```
 
-![Parábola da energia solar P(t), feita no GeoGebra](assets/parabola_solar_colonia_fiap.png)
+![Parábola da energia solar P(t), feita no GeoGebra](assets/grafico_parabola.png)
 
 *Gráfico da parábola P(t) feito no GeoGebra. O pico é ao meio-dia (12 h, 20 kW) e a curva vale 0 às 6 h e às 18 h. A área azul sob a curva, entre 6 h e 18 h, é de 160 kWh — a energia solar de um dia inteiro de sol.*
 
