@@ -263,7 +263,7 @@ def economia_kwh(desligados):
     return total
 
 
-# 3. PREVISÃO: REGRESSÃO LINEAR SIMPLES (y = a·x + b)
+# 3. REGRESSÃO LINEAR SIMPLES (y = a·x + b)
 
 
 def media(valores):
