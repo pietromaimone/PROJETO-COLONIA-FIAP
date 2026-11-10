@@ -1,4 +1,4 @@
-# Projeto Colônia — Missão Aurora Siger (FIAP)
+# Projeto Colônia Missão Aurora Siger (FIAP)
 
 Sistema integrado que simula o funcionamento inteligente de uma colônia em Marte. Continuação do projeto de pouso (MGPEB): os módulos já pousaram e agora formam a colônia, que precisa se organizar, gerar energia e tomar decisões sozinha.
 
