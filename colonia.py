@@ -1,25 +1,5 @@
-# MGPEB - MISSÃO AURORA SIGER
-# SISTEMA INTEGRADO DA COLÔNIA
-#
-# Continuação do mgpeb.py (pouso dos 18 módulos). Os módulos já pousaram e
-# formam a colônia. Este programa lê a base de dados da colônia nos arquivos:
-#   dados_colonia.md     -> 31 dias de energia, consumo (total e por sistema), vento e sol
-#   modulos_colonia.md  -> os 5 sistemas, suas prioridades e fontes de energia
-#   (como os valores são calculados: calculo_consumo_geracao.md)
-#
-# E junta o que foi trabalhado na fase:
-#   1. Organização dos dados (listas, chave-valor e hierarquia)
-#   2. Regras de decisão (lógica booleana, igual à do pouso)
-#   3. Previsão com regressão linear (vento -> energia eólica)
-#   4. Análise do uso de energia (produção x consumo x armazenamento)
-#
-# Usa só a biblioteca padrão do Python (os .md ficam na mesma pasta):
-#   python colonia.py
 
 import os
-
-
-# CONSTANTES DO SISTEMA (mesmo estilo do mgpeb.py)
 
 PASTA = os.path.dirname(os.path.abspath(__file__))
 ARQ_DADOS = os.path.join(PASTA, "dados_colonia.md")
@@ -31,9 +11,6 @@ ENERGIA_CRITICA = 20  # % de armazenamento considerado crítico
 CONSUMO_ALTO = 750  # kWh/dia a partir do qual o consumo é considerado alto
 VENTO_TEMPESTADE = 25  # acima disso é tempestade severa (m/s), igual ao pouso
 
-# Na tabela modulos_colonia.md, energia = 1 e laboratório = 5.
-# True  -> prioridade 1 é a mais importante (energia é a última a ser cortada)
-# False -> prioridade 5 é a mais importante (como nos módulos do mgpeb.py)
 MENOR_NUMERO_MAIS_IMPORTANTE = True
 
 VITAIS = ("Suporte médico", "Habitação")  # nunca podem ser desligados
@@ -64,7 +41,7 @@ def ler_tabela(caminho):
 
 
 def carregar_dados():
-    """Transforma a tabela de 31 dias em uma lista de dicionários."""
+  
     dias = []
 
     for c in ler_tabela(ARQ_DADOS):
@@ -80,7 +57,7 @@ def carregar_dados():
                 "vento": float(c[7]),
                 "tempo_sol": float(c[8]),
                 "armazenamento": float(c[9]),
-                # consumo de cada sistema no dia (ver calculo_consumo_geracao.md)
+               
                 "consumo_sistemas": {
                     "Energia": float(c[10]),
                     "Habitação": float(c[11]),
@@ -96,7 +73,7 @@ def carregar_dados():
 
 
 def carregar_sistemas():
-    """Transforma a tabela dos sistemas em um dicionário (chave = nome)."""
+   
     sistemas = {}
 
     for c in ler_tabela(ARQ_SISTEMAS):
@@ -112,9 +89,6 @@ def carregar_sistemas():
 
 
 # 1. ORGANIZAÇÃO DOS DADOS
-#
-# A colônia é uma hierarquia de dicionários (chave-valor dentro de chave-valor).
-# Os dias ficam em uma lista; os sistemas, em um dicionário.
 
 dias = carregar_dados()
 sistemas = carregar_sistemas()
@@ -130,12 +104,12 @@ colonia = {
     "sistemas": sistemas,
 }
 
-# Pilha com o registro dos eventos (igual ao historico do mgpeb.py)
+# Pilha 
 historico = []
 
 
 def carregar_dia(d):
-    """Coloca os dados de um dia na hierarquia da colônia."""
+   
     colonia["energia"]["solar"]["producao"] = d["producao_solar"]
     colonia["energia"]["eolico"]["producao"] = d["producao_eolica"]
     colonia["energia"]["armazenamento"]["nivel"] = d["armazenamento"]
@@ -148,7 +122,7 @@ def carregar_dia(d):
 
 
 def navegar(caminho):
-    """Acessa um subsistema pelo caminho. Ex.: 'energia/solar/producao'."""
+    
     no = colonia
 
     for parte in caminho.split("/"):
@@ -158,7 +132,7 @@ def navegar(caminho):
 
 
 def mostrar_arvore(no, nivel):
-    """Percorre a hierarquia e imprime cada subsistema com recuo."""
+
     for chave in no:
         valor = no[chave]
 
@@ -169,11 +143,10 @@ def mostrar_arvore(no, nivel):
             print("  " * nivel + "- %s: %s" % (chave, valor))
 
 
-# ORDENAÇÃO: INSERTION SORT (o mesmo do mgpeb.py)
-
+# ORDENAÇÃO: INSERTION SORT
 
 def criterio_corte(nome):
-    """Quem é menos importante vem primeiro (será desligado primeiro)."""
+   
     p = sistemas[nome]["prioridade"]
 
     if MENOR_NUMERO_MAIS_IMPORTANTE:
@@ -183,7 +156,7 @@ def criterio_corte(nome):
 
 
 def ordenar(lista, criterio):
-    """Ordena a lista utilizando o algoritmo insertion sort."""
+    
     for i in range(1, len(lista)):
         atual = lista[i]
         j = i - 1
@@ -196,9 +169,7 @@ def ordenar(lista, criterio):
 
 
 def ordem_de_corte():
-    """Lista (estrutura linear) dos sistemas que podem ser desligados,
-    do menos para o mais importante. Vitais e energia ficam de fora.
-    """
+ 
     cortaveis = []
 
     for nome in sistemas:
@@ -211,15 +182,13 @@ def ordem_de_corte():
 
 
 def sem_fonte(nome):
-    """Sistema sem solar, sem eólica e sem armazenamento não tem de onde
-    receber energia (como os sensores em falha do pouso).
-    """
+  
     s = sistemas[nome]
     return not (s["solar"] or s["eolico"] or s["armazenamento"])
 
 
 def suporte_vida_ok():
-    """V: o suporte de vida de habitação e do médico está funcionando."""
+
     for nome in VITAIS:
         if not sistemas[nome]["suporte_vida"]:
             return False
@@ -227,22 +196,7 @@ def suporte_vida_ok():
     return True
 
 
-# 2. REGRAS DE DECISÃO (lógica booleana, como no pouso)
-#
-# Variáveis, calculadas a cada dia:
-#   V  = suporte de vida ok
-#   E  = energia baixa        (armazenamento < ENERGIA_MIN %)
-#   X  = energia crítica      (armazenamento < ENERGIA_CRITICA %)
-#   K  = consumo alto         (consumo > CONSUMO_ALTO)
-#   T  = tempestade severa    (vento > VENTO_TEMPESTADE)
-#
-# Em ordem de prioridade (a primeira regra verdadeira vence):
-#   CRITICO     = ¬V
-#   EMERGENCIA  = V · X · K
-#   ECONOMIA    = V · E · K · ¬X
-#   REDUZIR     = V · E · ¬K
-#   PROTEGER    = V · ¬E · T
-
+# 2. REGRAS DE DECISÃO
 
 def critico(V):
     return bool(not V)
@@ -265,10 +219,7 @@ def proteger(V, E, T):
 
 
 def decidir(energia, consumo, vida=True, vento=0):
-    """Transforma os dados em UMA decisão clara.
-    energia = armazenamento em %, consumo em kWh/dia.
-    Retorna (mensagem, ação).
-    """
+
     V = vida
     E = energia < ENERGIA_MIN
     X = energia < ENERGIA_CRITICA
@@ -300,16 +251,16 @@ def aplicar(acao):
     cortaveis = ordem_de_corte()
 
     if acao == "emergencia":
-        return cortaveis  # todos os não essenciais
-
+        return cortaveis  
+        
     if acao == "economia":
-        return cortaveis[:1]  # só o menos importante
+        return cortaveis[:1]  
 
     return []
 
 
 def economia_kwh(desligados):
-    """Quanto se economiza: soma o consumo do dia dos sistemas desligados."""
+   
     total = 0
 
     for nome in desligados:
@@ -331,9 +282,7 @@ def media(valores):
 
 
 def regressao_linear(x, y):
-    """Ajusta a reta pelo método dos mínimos quadrados.
-    Retorna (a, b, r2). O r2 mostra o quanto a reta explica os dados (1 = perfeito).
-    """
+   
     mx = media(x)
     my = media(y)
 
@@ -360,34 +309,26 @@ def regressao_linear(x, y):
 
 
 def prever(a, b, x):
-    """Usa a reta ajustada para estimar um valor."""
+   
     return a * x + b
 
 
-# MEDIÇÕES REAIS (com ruído). Em dias anteriores a colônia mediu o vento e a
-# energia que a turbina gerou, e o tempo de sol e a energia solar. Como são
-# medições reais, os pontos têm ruído: a reta não passa exata por todos eles
-# e o r2 fica abaixo de 1 — é uma previsão de verdade, com erro.
-# Cada par é (medida, energia_gerada_no_dia em kWh).
 
-# Vento (m/s)  ->  energia eólica medida no dia (kWh)
 vento_medido = [6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 7, 8, 9, 10, 6]
 eolica_medida = [348, 433, 465, 496, 551, 528, 612, 585, 648, 677, 705, 410, 489, 560, 606, 372]
 
-# Tempo de sol (h)  ->  energia solar medida no dia (kWh)
+
 sol_medido = [8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 9, 10, 11, 8]
 solar_medida = [112, 101, 124, 117, 138, 129, 141, 151, 140, 153, 156, 164, 126, 127, 149, 110]
 
-teto_eolica = max(d["producao_eolica"] for d in dias)  # teto da turbina (720 kWh)
+teto_eolica = max(d["producao_eolica"] for d in dias)  
 
 a_eol, b_eol, r2_eol = regressao_linear(vento_medido, eolica_medida)
 a_sol, b_sol, r2_sol = regressao_linear(sol_medido, solar_medida)
 
 
 def energia_eolica(vento):
-    """Energia eólica prevista (kWh/dia) para um vento (m/s).
-    Tempestade desliga as turbinas; o equipamento tem um limite máximo.
-    """
+  
     if vento > VENTO_TEMPESTADE:
         return 0.0
 
@@ -395,7 +336,7 @@ def energia_eolica(vento):
 
 
 def energia_solar(horas_sol):
-    """Energia solar prevista (kWh/dia) para as horas de sol."""
+    
     return max(0.0, prever(a_sol, b_sol, horas_sol))
 
 
@@ -403,7 +344,7 @@ def energia_solar(horas_sol):
 
 
 def analisar_energia(geracao, consumo, reserva=None):
-    """Compara geração, consumo e reserva e gera uma ação simples."""
+ 
     if consumo > geracao:
         msg = "ALERTA: consumo maior que geração"
 
@@ -422,13 +363,10 @@ def nomes(lista):
     return ", ".join(lista) if lista else "nenhum"
 
 
-# MODO INTERATIVO (opcional): o usuário digita um cenário e vê a decisão
-
+# MODO INTERATIVO
 
 def modo_interativo():
-    """Deixa o usuário testar a colônia: digita os dados e vê a decisão.
-    Roda só quando o programa é chamado com  python colonia.py -i
-    """
+
     print("\n=== MODO INTERATIVO ===")
     print("Digite os dados de um dia e veja a decisão. Enter vazio para sair.\n")
 
@@ -457,7 +395,7 @@ def modo_interativo():
         print()
 
 
-# PROGRAMA PRINCIPAL
+# PROGRAMA MAIN
 
 print("=== 1. ORGANIZAÇÃO DOS DADOS ===")
 print("Arquivos lidos: %d dias de dados e %d sistemas" % (len(dias), len(sistemas)))
@@ -502,7 +440,7 @@ print("Ordem de corte (menos importante primeiro):", ordem_de_corte())
 print("\n=== 2. REGRAS DE DECISÃO ===")
 
 testes = [
-    # (armazenamento %, consumo kWh, suporte de vida, vento)
+    
     (40, 800, True, 10),
     (40, 600, True, 10),
     (15, 800, True, 10),
@@ -626,7 +564,6 @@ for _ in range(min(3, len(historico))):
     print("  ", historico.pop())
 
 
-# CONCLUSÃO (texto automático a partir dos resultados do mês)
 
 print("\n=== CONCLUSÃO ===")
 
@@ -656,7 +593,7 @@ print(
 print("painéis ou uma bateria maior deixariam a colônia mais segura.")
 
 
-# Roda o modo interativo só se pedir:  python colonia.py -i
+# acessa o modo interativo:  python colonia.py -i
 import sys
 
 if "-i" in sys.argv or "--interativo" in sys.argv:
