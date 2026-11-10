@@ -84,4 +84,4 @@ python colonia.py -i
 
 Nos 31 dias, a colônia operou normal em 24 e precisou agir em 7. O consumo do mês (22.923 kWh) ficou bem perto da geração (22.522 kWh), ou seja, a colônia vive no limite e depende da bateria para atravessar os dias ruins.
 
-O pior momento foi o dia 13: a tempestade desligou as turbinas, a bateria zerou e o sistema entrou em **emergência**, cortando Logística e Laboratório para proteger o suporte à vida — que nunca foi desligado. O sistema de decisão deu conta, mas a margem é pequena; mais painéis ou uma bateria maior deixariam a colônia mais segura.
+O pior momento foi o dia 13: a tempestade desligou as turbinas, a bateria zerou e o sistema entrou em **emergência**, cortando Logística e Laboratório para proteger o suporte à vida que nunca foi desligado. O sistema de decisão deu conta, mas a margem é pequena; mais painéis ou uma bateria maior deixariam a colônia mais segura.
