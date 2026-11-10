@@ -5,25 +5,21 @@ PASTA = os.path.dirname(os.path.abspath(__file__))
 ARQ_DADOS = os.path.join(PASTA, "dados_colonia.md")
 ARQ_SISTEMAS = os.path.join(PASTA, "modulos_colonia.md")
 
-CAPACIDADE = 600  # kWh da bateria
-ENERGIA_MIN = 50  # % mínimo de armazenamento para operar sem alerta
-ENERGIA_CRITICA = 20  # % de armazenamento considerado crítico
-CONSUMO_ALTO = 750  # kWh/dia a partir do qual o consumo é considerado alto
-VENTO_TEMPESTADE = 25  # acima disso é tempestade severa (m/s), igual ao pouso
+CAPACIDADE = 600  
+ENERGIA_MIN = 50 
+ENERGIA_CRITICA = 20  
+CONSUMO_ALTO = 750 
+VENTO_TEMPESTADE = 25  
 
 MENOR_NUMERO_MAIS_IMPORTANTE = True
 
-VITAIS = ("Suporte médico", "Habitação")  # nunca podem ser desligados
-SISTEMA_ENERGIA = "Energia"  # também nunca é desligado
-
+VITAIS = ("Suporte médico", "Habitação") 
+SISTEMA_ENERGIA = "Energia"  
 
 # LEITURA DOS ARQUIVOS .md (tabelas)
 
 
 def ler_tabela(caminho):
-    """Lê a tabela de um .md e devolve uma lista de linhas (cada uma é uma
-    lista de textos). Ignora o cabeçalho e a linha de separação.
-    """
     linhas = []
 
     with open(caminho, encoding="utf-8") as arquivo:
@@ -245,9 +241,7 @@ def decidir(energia, consumo, vida=True, vento=0):
 
 
 def aplicar(acao):
-    """Devolve a lista de sistemas desligados pela ação.
-    Suporte médico, habitação e energia nunca entram nessa lista.
-    """
+   
     cortaveis = ordem_de_corte()
 
     if acao == "emergencia":
