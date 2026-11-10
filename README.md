@@ -68,15 +68,15 @@ python colonia.py -i
 
 ## Gráficos
 
-**Armazenamento ao longo do mês** — mostra a bateria subindo e descendo, e o mergulho a zero na tempestade (dias 13 e 14).
+**Armazenamento ao longo do mês** mostra a bateria subindo e descendo, e o mergulho a zero na tempestade (dias 13 e 14).
 
 ![Armazenamento ao longo dos 31 dias](assets/grafico_armazenamento.png)
 
-**Geração x consumo** — verde quando sobra energia, vermelho quando falta.
+**Geração x consumo** verde quando sobra energia, vermelho quando falta.
 
 ![Geração x consumo por dia](assets/grafico_geracao_consumo.png)
 
-**Regressão (vento → energia eólica)** — os pontos são medições reais; a reta vermelha é a previsão.
+**Regressão (vento → energia eólica)** os pontos são medições reais; a reta vermelha é a previsão.
 
 ![Regressão vento x energia eólica](assets/grafico_regressao_eolica.png)
 
@@ -84,4 +84,4 @@ python colonia.py -i
 
 Nos 31 dias, a colônia operou normal em 24 e precisou agir em 7. O consumo do mês (22.923 kWh) ficou bem perto da geração (22.522 kWh), ou seja, a colônia vive no limite e depende da bateria para atravessar os dias ruins.
 
-O pior momento foi o dia 13: a tempestade desligou as turbinas, a bateria zerou e o sistema entrou em **emergência**, cortando Logística e Laboratório para proteger o suporte à vida que nunca foi desligado. O sistema de decisão deu conta, mas a margem é pequena; mais painéis ou uma bateria maior deixariam a colônia mais segura.
+O pior momento foi o dia 13: a tempestade desligou as turbinas, a bateria zerou e o sistema entrou em **emergência**, cortando Logística e Laboratório para proteger o suporte à vida que nao foi desligado. O sistema de decisão deu conta, mas a margem é pequena, mais painéis ou uma bateria maior deixariam a colônia mais segura.
