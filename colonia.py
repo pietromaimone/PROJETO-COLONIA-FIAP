@@ -582,7 +582,7 @@ print(
 )
 print("e Laboratório para proteger o suporte à vida, que nunca foi desligado.")
 print(
-    "Conclusão: o sistema de decisão deu conta, mas a margem é pequena — mais"
+    "Conclusão: o sistema de decisão deu conta, mas a margem é pequena mais"
 )
 print("painéis ou uma bateria maior deixariam a colônia mais segura.")
 
